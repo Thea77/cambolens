@@ -2,6 +2,7 @@ package co.istad.cambolens.api.user;
 
 import java.util.List;
 
+import co.istad.cambolens.api.file.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class User {
     private String familyName;
     private String givenName;
     private String phoneNumber;
-    // private Image profile;
+    private File profile;
     private String biography;
     private Boolean isEnabled;
     private String verificationCode;
