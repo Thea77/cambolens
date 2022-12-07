@@ -1,5 +1,9 @@
 package co.istad.cambolens.api.user.dto;
 
+import java.util.List;
+
+import co.istad.cambolens.api.file.dto.FileDto;
+import co.istad.cambolens.api.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -19,7 +23,6 @@ public class UserDto {
     private String familyName;
     private String givenName;
     private String phoneNumber;
-    private String biography;
-    // private ImageDto profile;
+    private FileDto profile;
 
 }

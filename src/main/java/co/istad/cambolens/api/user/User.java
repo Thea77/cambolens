@@ -27,8 +27,7 @@ public class User {
     private String givenName;
     private String phoneNumber;
     private File profile;
-    private String biography;
     private Boolean isEnabled;
     private String verificationCode;
-    private List<Role> roles;
+    private List<Role> userRoles;
 }
