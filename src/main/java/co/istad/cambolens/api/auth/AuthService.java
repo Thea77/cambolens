@@ -4,6 +4,7 @@ import co.istad.cambolens.api.auth.web.AuthDto;
 import co.istad.cambolens.api.auth.web.ChangePasswordDto;
 import co.istad.cambolens.api.auth.web.LogInDto;
 import co.istad.cambolens.api.auth.web.RegisterDto;
+import co.istad.cambolens.api.user.dto.ProfileDto;
 import co.istad.cambolens.api.user.dto.UserDto;
 
 import javax.mail.MessagingException;
@@ -33,12 +34,14 @@ public interface AuthService {
      * Change password of user
      * @param changePasswordDto contains required credentials
      */
-    // void changePassword(ChangePasswordDto changePasswordDto);
+    void changePassword(ChangePasswordDto changePasswordDto);
 
 
-    // void sendEmailConfirmation(String email) throws MessagingException, UnsupportedEncodingException;
+    void changeProfile(ProfileDto profileDto);
+
+    void sendEmailConfirmation(String email) throws MessagingException, UnsupportedEncodingException;
 
 
-    // void verifyEmail(String email, String verificationCode);
+    void verifyEmail(String email, String verificationCode);
 
 }

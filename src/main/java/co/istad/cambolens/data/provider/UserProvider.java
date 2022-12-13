@@ -57,4 +57,33 @@ public class UserProvider {
             WHERE("u.id = #{id}");
         }}.toString();
     }
+
+    public String buildSelectByUsernameOrEmailSql() {
+        return new SQL() {{
+            SELECT("*");
+            FROM("users");
+            WHERE("username = #{usernameOrEmail}", "is_enabled = #{isEnabled}");
+            OR();
+            WHERE("email = #{usernameOrEmail}", "is_enabled = #{isEnabled}");
+        }}.toString();
+    }
+
+    
+    public String buildUpdatePasswordWhereIdSql() {
+        return new SQL() {{
+            UPDATE("users");
+            SET("password = #{encodedPassword}");
+            WHERE("id = #{id}");
+        }}.toString();
+    }
+
+    public String buildUpdateCoverByIdSql() {
+        return new SQL() {
+            {
+                UPDATE("users");
+                SET("profile = #{profileId}");
+                WHERE("id = #{id}");
+            }
+        }.toString();
+    }
 }

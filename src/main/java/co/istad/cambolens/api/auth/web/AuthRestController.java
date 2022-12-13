@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +28,7 @@ import co.istad.cambolens.api.auth.TokenRequest;
 import co.istad.cambolens.api.auth.TokenResponse;
 import co.istad.cambolens.api.auth.jwt.JwtTokenUtil;
 import co.istad.cambolens.shared.rest.Rest;
+import co.istad.cambolens.api.user.dto.ProfileDto;
 import co.istad.cambolens.api.user.dto.UserDto;
 // import co.istad.cambolens.api.user.dto.UserInsertDto;
 // import co.istad.cambolens.api.user.service.UserServiceImp;
@@ -74,45 +76,59 @@ public class AuthRestController {
         return ResponseEntity.ok(rest);
     }
 
-    // @PostMapping("send-email-confirmation")
-    // ResponseEntity<?> sendEmailConfirmation(@RequestBody EmailConfirmationDto emailConfirmationDto) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+    @PostMapping("send-email-confirmation")
+    ResponseEntity<?> sendEmailConfirmation(@RequestBody EmailConfirmationDto emailConfirmationDto) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
 
-    //     authService.sendEmailConfirmation(emailConfirmationDto.getValue());
+        authService.sendEmailConfirmation(emailConfirmationDto.getValue());
 
-    //     var rest = new HashMap<String, Object>();
-    //     rest.put("status", true);
-    //     rest.put("code", HttpStatus.OK.value());
-    //     rest.put("message", "Please check and confirm your email.");
-    //     rest.put("timestamp", DateTimeUtils.getTS());
+        var rest = new HashMap<String, Object>();
+        rest.put("status", true);
+        rest.put("code", HttpStatus.OK.value());
+        rest.put("message", "Please check and confirm your email.");
+        rest.put("timestamp", DateTimeUtils.getTS());
 
-    //     return ResponseEntity.ok(rest);
-    // }
+        return ResponseEntity.ok(rest);
+    }
 
     
-    // @GetMapping("verify-email")
-    // String verifyEmail(@RequestParam("email") String email,
-    //                          @RequestParam("verificationCode") String verificationCode) {
+    @GetMapping("verify-email")
+    String verifyEmail(@RequestParam("email") String email,
+                             @RequestParam("verificationCode") String verificationCode) {
 
-    //     authService.verifyEmail(email, verificationCode);
+        authService.verifyEmail(email, verificationCode);
 
-    //     return "Your email has been verified..!";
-    // }
+        return "Your email has been verified..!";
+    }
 
 
-    // @PostMapping("/change-password")
-    // ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+    @PutMapping("/change-password")
+    ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
 
-    //     authService.changePassword(changePasswordDto);
+        authService.changePassword(changePasswordDto);
 
-    //     var rest = new HashMap<String, Object>();
-    //     rest.put("status", true);
-    //     rest.put("code", HttpStatus.OK.value());
-    //     rest.put("message", "Password has been changed successfully.");
-    //     rest.put("timestamp", DateTimeUtils.getTS());
+        var rest = new HashMap<String, Object>();
+        rest.put("status", true);
+        rest.put("code", HttpStatus.OK.value());
+        rest.put("message", "Password has been changed successfully.");
+        rest.put("timestamp", DateTimeUtils.getTS());
 
-    //     return ResponseEntity.ok(rest);
-    // }
+        return ResponseEntity.ok(rest);
+    }
 
+
+    @PutMapping("/change-profile")
+    ResponseEntity<?> changeProfile(@Valid @RequestBody ProfileDto profileDto) {
+
+        authService.changeProfile(profileDto);
+
+        var rest = new HashMap<String, Object>();
+        rest.put("status", true);
+        rest.put("code", HttpStatus.OK.value());
+        rest.put("message", "Profile has been changed successfully.");
+        rest.put("timestamp", DateTimeUtils.getTS());
+
+        return ResponseEntity.ok(rest);
+    }
 
 
 

@@ -2,8 +2,8 @@ package co.istad.cambolens.api.auth.web;
 
 import javax.validation.constraints.NotBlank;
 
-// import co.istad.cambolens.shared.validation.password.Password;
-// import co.istad.cambolens.shared.validation.password.PasswordMatch;
+import co.istad.cambolens.shared.validation.password.Password;
+import co.istad.cambolens.shared.validation.password.PasswordMatch;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,18 +19,18 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-// @PasswordMatch(password = "newPassword", confirmedPassword = "confirmedPassword")
+@PasswordMatch(password = "newPassword", confirmedPassword = "confirmedPassword")
 public class ChangePasswordDto {
     
-    // @Password
+    @Password
     @NotBlank
     private String currentPassword;
 
-    // @Password
+    @Password
     @NotBlank
     private String newPassword;
 
-    // @Password
+    @Password
     @NotBlank
     private String confirmedPassword;
 }

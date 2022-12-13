@@ -4,10 +4,13 @@ import co.istad.cambolens.api.auth.web.AuthDto;
 import co.istad.cambolens.api.auth.web.ChangePasswordDto;
 import co.istad.cambolens.api.auth.web.LogInDto;
 import co.istad.cambolens.api.auth.web.RegisterDto;
+import co.istad.cambolens.api.email.EmailServiceImpl;
+import co.istad.cambolens.api.email.web.EmailDto;
 // import co.istad.cambolens.api.email.EmailServiceImpl;
 // import co.istad.cambolens.api.email.web.EmailDto;
 import co.istad.cambolens.api.file.File;
 import co.istad.cambolens.api.file.service.FileServiceImpl;
+import co.istad.cambolens.api.user.dto.ProfileDto;
 // import co.istad.cambolens.api.file.service.ImageServiceImpl;
 import co.istad.cambolens.api.user.dto.UserDto;
 import co.istad.cambolens.api.user.mapper.UserMapper;
@@ -44,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final FileServiceImpl fileServiceImpl;
-    // private final EmailServiceImpl emailService;
+    private final EmailServiceImpl emailService;
     
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
@@ -58,26 +61,27 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final AuthMapper authMapper;
 
-    // @Override
-    // public void changePassword(ChangePasswordDto changePasswordDto) {
+    @Override
+    public void changePassword(ChangePasswordDto changePasswordDto) {
 
-    //     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    //     CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
 
-    //     if (!bCryptPasswordEncoder.matches(changePasswordDto.getCurrentPassword(), customUserSecurity.getPassword())) {
-    //         String reason = "Change password is failed!";
-    //         Throwable cause = new Throwable("Current password is wrong!");
-    //         throw new BadCredentialsException(reason, cause);
-    //     }
+        if (!bCryptPasswordEncoder.matches(changePasswordDto.getCurrentPassword(), customUserSecurity.getPassword())) {
+            String reason = "Change password is failed!";
+            Throwable cause = new Throwable("Current password is wrong!");
+            throw new BadCredentialsException(reason, cause);
+        }
 
-    //     Integer userId = customUserSecurity.getUser().getId();
+        Long userId = customUserSecurity.getUser().getId();
 
-    //     String encodedPassword = bCryptPasswordEncoder.encode(changePasswordDto.getNewPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(changePasswordDto.getNewPassword());
 
-    //     userRepository.updatePasswordWhereId(userId, encodedPassword);
+        userRepository.updatePasswordWhereId(userId, encodedPassword);
 
-    // }
+    }
 
+    
     @Override
     public AuthDto logIn(LogInDto logInDto) {
 
@@ -180,36 +184,51 @@ public class AuthServiceImpl implements AuthService {
 
 
 
-    // @Override
-    // public void sendEmailConfirmation(String email) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+    @Override
+    public void sendEmailConfirmation(String email) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
 
-    //     var random = new Random();
-    //     String code = String.format("%6d", random.nextInt(999999));
+        var random = new Random();
+        String code = String.format("%6d", random.nextInt(999999));
 
-    //     var user = userRepository.selectWhereUsernameOrEmail(email, false).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
-    //     user.setVerificationCode(code);
+        var user = userRepository.selectWhereUsernameOrEmail(email, false).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+        user.setVerificationCode(code);
 
-    //     userRepository.updateVerificationCodeWhereId(user.getId(), user.getVerificationCode());
+        userRepository.updateVerificationCodeWhereId(user.getId(), user.getVerificationCode());
 
-    //     EmailDto<?> emailDto = EmailDto.builder()
-    //             .receiver(email)
-    //             .subject("Email Verification")
-    //             .templateName("email/email-confirmation")
-    //             .additionalInfo(user)
-    //             .build();
+        EmailDto<?> emailDto = EmailDto.builder()
+                .receiver(email)
+                .subject("Email Verification")
+                .templateName("email/email-confirmation")
+                .additionalInfo(user)
+                .build();
 
-    //     emailService.sendEmail(emailDto);
-    // }
+        emailService.sendEmail(emailDto);
+    }
 
 
-    // @Override
-    // public void verifyEmail(String email, String verificationCode) {
+    @Override
+    public void verifyEmail(String email, String verificationCode) {
 
-    //     User user = userRepository.selectWhereEmailAndVerificationCode(email, verificationCode)
-    //             .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+        User user = userRepository.selectWhereEmailAndVerificationCode(email, verificationCode)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
         
-    //     userRepository.updateVerificationCodeWhereId(user.getId(), null);
-    //     userRepository.updateIsEnabledWhereId(user.getId(), true);
-    // }
+        userRepository.updateVerificationCodeWhereId(user.getId(), null);
+        userRepository.updateIsEnabledWhereId(user.getId(), true);
+    }
+
+
+    @Override
+    public void changeProfile(ProfileDto profileDto) {
+    
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
+    
+            Long userId = customUserSecurity.getUser().getId();
+
+        Long profileId = profileDto.getProfileId();
+
+        userRepository.updateProfileWhereUserId(userId, profileId);
+        
+    }
 
 }

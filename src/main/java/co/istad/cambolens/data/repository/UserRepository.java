@@ -1,6 +1,7 @@
 package co.istad.cambolens.data.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.*;
@@ -53,5 +54,35 @@ public interface UserRepository {
     @Select("SELECT EXISTS(SELECT * FROM users WHERE username = #{username})")
     boolean existsWhereUsername(@Param("username") String username);
 
+    @SelectProvider(type = UserProvider.class, method = "buildSelectByUsernameOrEmailSql")
+    @ResultMap(value = "userResultMap")
+    Optional<User> selectWhereUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail, @Param("isEnabled") Boolean isEnabled);
+    
 
+    @UpdateProvider(type = UserProvider.class, method = "buildUpdatePasswordWhereIdSql")
+    @ResultMap("userResultMap")
+    void updatePasswordWhereId(@Param("id") Long id, @Param("encodedPassword") String encodedPassword);
+    
+
+    // email verification
+    @Select("SELECT * FROM users WHERE email = #{email} AND verification_code = #{verificationCode}")
+    @ResultMap("userResultMap")
+    Optional<User> selectWhereEmailAndVerificationCode(@Param("email") String email, @Param("verificationCode") String verificationCode);
+
+    
+    @Update("UPDATE users SET verification_code = #{verificationCode} WHERE id = #{id}")
+    void updateVerificationCodeWhereId(@Param("id") Long id, @Param("verificationCode") String verificationCode);
+    
+    
+    @Update("UPDATE users SET is_enabled = #{isEnabled} WHERE id = #{id}")
+    @ResultMap("userResultMap")
+    void updateIsEnabledWhereId(@Param("id") Long id, @Param("isEnabled") Boolean isEnabled);
+    
+
+    @UpdateProvider(type = UserProvider.class, method = "buildUpdateCoverByIdSql")
+    void updateProfileWhereUserId(@Param("id") Long id, @Param("profileId") Long profileId);
+
+
+    @Select("SELECT EXISTS (SELECT * FROM users WHERE id = #{id})")
+    boolean existsById(@Param("id") Long id);
 }
