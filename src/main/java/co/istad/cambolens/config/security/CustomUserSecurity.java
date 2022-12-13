@@ -15,7 +15,7 @@ public class CustomUserSecurity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getUserRoles();
+        return user.getRoles();
     }
 
     @Override

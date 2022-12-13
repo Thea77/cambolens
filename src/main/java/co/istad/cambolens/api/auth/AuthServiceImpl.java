@@ -7,6 +7,7 @@ import co.istad.cambolens.api.auth.web.RegisterDto;
 // import co.istad.cambolens.api.email.EmailServiceImpl;
 // import co.istad.cambolens.api.email.web.EmailDto;
 import co.istad.cambolens.api.file.File;
+import co.istad.cambolens.api.file.service.FileServiceImpl;
 // import co.istad.cambolens.api.file.service.ImageServiceImpl;
 import co.istad.cambolens.api.user.dto.UserDto;
 import co.istad.cambolens.api.user.mapper.UserMapper;
@@ -42,7 +43,7 @@ import java.util.*;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    // private final ImageServiceImpl imageServiceImp;
+    private final FileServiceImpl fileServiceImpl;
     // private final EmailServiceImpl emailService;
     
     private final UserDetailsService userDetailsService;
@@ -90,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
         UserDto userDto = userMapper.fromModel(customUserSecurity.getUser());
         // System.out.println("myUser"+userDto);
         
-        // userDto.getProfile().buildNameAndUri(fileBaseUri);
+        userDto.getProfile().buildNameAndUri(fileBaseUri);
 
         // generated Toekn
         String myToken = this.buildAuthorizationHeader(logInDto);
@@ -155,25 +156,27 @@ public class AuthServiceImpl implements AuthService {
 
 
 
-    // @Override
-    // public UserDto register(RegisterDto registerDto) {
+    @Override
+    public UserDto register(RegisterDto registerDto) {
 
-    //     User user = authMapper.fromRegisterDto(registerDto);
-    //     user.setProfile(new Image(registerDto.getProfileId()));
-    //     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-    //     user.setIsEnabled(false);
+        User user = authMapper.fromRegisterDto(registerDto);
+        user.setProfile(new File(registerDto.getProfileId()));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setIsEnabled(false);
+        registerDto.setRoleIds(2); //role EDITOR
+        userRepository.insert(user);
 
-    //     userRepository.insert(user);
+        // registerDto.getRoleIds().forEach(roleId -> {
+        //     userRepository.insertUserRole(user.getId(), roleId);
+            
+        // });
+        userRepository.insertUserRole(user.getId(), registerDto.getRoleIds());
 
-    //     registerDto.getRoleIds().forEach(roleId -> {
-    //         userRepository.insertUserRole(user.getId(), roleId);
-    //     });
+        UserDto userDto = userMapper.fromModel(user);
+        userDto.setProfile(fileServiceImpl.getFileByID(registerDto.getProfileId()));
 
-    //     UserDto userDto = userMapper.toDto(user);
-    //     userDto.setProfile(imageServiceImp.getImageById(registerDto.getProfileId()));
-
-    //     return userDto;
-    // }
+        return userDto;
+    }
 
 
 

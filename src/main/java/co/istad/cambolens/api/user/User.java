@@ -19,7 +19,7 @@ import lombok.ToString;
 @ToString
 @Builder
 public class User {
-    private Integer id;
+    private Long id;
     private String username;
     private String email;
     private String password;
@@ -29,5 +29,5 @@ public class User {
     private File profile;
     private Boolean isEnabled;
     private String verificationCode;
-    private List<Role> userRoles;
+    private List<Role> roles;
 }

@@ -5,6 +5,27 @@ import org.apache.ibatis.jdbc.SQL;
 public class UserProvider {
     
 
+    public String buildInsertUserRoleSql() {
+        return new SQL() {{
+            INSERT_INTO("users_roles");
+            VALUES("user_id", "#{userId}");
+            VALUES("role_id", "#{roleId}");
+        }}.toString();
+    }
+
+    public String buildInsertSql() {
+        return new SQL() {{
+            INSERT_INTO("users");
+            VALUES("username", "#{user.username}");
+            VALUES("email", "#{user.email}");
+            VALUES("family_name", "#{user.familyName}");
+            VALUES("given_name", "#{user.givenName}");
+            VALUES("phone_number", "#{user.phoneNumber}");
+            VALUES("profile", "#{user.profile.id}");
+            VALUES("is_enabled", "#{user.isEnabled}");
+            VALUES("password", "#{user.password}");
+        }}.toString();
+    }
 
     public String buildSelectUserByUserName() {
         return new SQL() {

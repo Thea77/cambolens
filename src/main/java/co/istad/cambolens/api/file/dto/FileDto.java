@@ -22,6 +22,7 @@ public class FileDto {
     //private Boolean isEnabled;
 
     public void buildNameAndUri(String baseUri) {
+        extension = extension.trim();
         name = String.format("%s.%s", uuid, extension);
         uri = baseUri + name;
     }

@@ -18,7 +18,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class EmailConfirmationDto {
 
-    // @Email
+    @Email
     @NotBlank
     @JsonProperty("email")
     private String value;

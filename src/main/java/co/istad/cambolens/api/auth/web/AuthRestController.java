@@ -47,15 +47,15 @@ public class AuthRestController {
     private final AuthServiceImpl authService;
 
 
-    // @PostMapping("/register")
-    // public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDto body){
-    //     UserDto userDto = authService.register(body);
-    //     // log.info("Body={}",body);
-    //     Rest<Object> rest = Rest.ok()
-    //                 .setData(userDto)
-    //                 .setMessage("You have been registerd successfully.");
-    //     return ResponseEntity.ok(rest);
-    // }
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDto body){
+        UserDto userDto = authService.register(body);
+        // log.info("Body={}",body);
+        Rest<Object> rest = Rest.ok()
+                    .setData(userDto)
+                    .setMessage("You have been registerd successfully.");
+        return ResponseEntity.ok(rest);
+    }
 
     
 

@@ -30,4 +30,15 @@ public class UserServiceImpl implements UserService{
         return userDtos;
     }
     
+    @Override
+    public boolean checkUserEmail(String email) {
+        return userRepository.existsWhereEmail(email);
+    }
+
+    @Override
+    public boolean checkUsername(String username) {
+        return userRepository.existsWhereUsername(username);
+    }
+
+
 }

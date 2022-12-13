@@ -22,11 +22,19 @@ public interface UserRepository {
         @Result(column = "phone_number", property = "phoneNumber"),
         @Result(column = "is_enabled", property = "isEnabled"),
         @Result(column = "profile", property = "profile", one = @One(select = "selectUserProfile")),
-        @Result(column = "id", property = "userRoles", many = @Many(select = "selectUserRoles"))
+        @Result(column = "id", property = "roles", many = @Many(select = "selectUserRoles"))
 })
     List<User> select();
 
+    @InsertProvider(type = UserProvider.class, method = "buildInsertUserRoleSql")
+    void insertUserRole(@Param("userId") Long userId, @Param("roleId") Integer roleId);
 
+
+    @InsertProvider(type = UserProvider.class, method = "buildInsertSql")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    void insert(@Param("user") User user);
+
+    
     @SelectProvider(type = UserProvider.class ,method = "buildSelectUserByUserName")
     @ResultMap("userResultMap")
     User selectByUserName(@Param("username") String username);
@@ -38,4 +46,12 @@ public interface UserRepository {
 
     @SelectProvider(type = UserProvider.class, method = "buildSelectUserRolesSql")
     List<Role> selectUserRoles(@Param("id") Integer id);
+
+    @Select("SELECT EXISTS(SELECT * FROM users WHERE email = #{email})")
+    boolean existsWhereEmail(@Param("email") String email);
+
+    @Select("SELECT EXISTS(SELECT * FROM users WHERE username = #{username})")
+    boolean existsWhereUsername(@Param("username") String username);
+
+
 }

@@ -14,6 +14,13 @@ import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import co.istad.cambolens.shared.constraint.fileid.ConstraintFileId;
+import co.istad.cambolens.shared.validation.email.ConstraintEmail;
+import co.istad.cambolens.shared.validation.password.Password;
+import co.istad.cambolens.shared.validation.password.PasswordMatch;
+import co.istad.cambolens.shared.validation.username.ConstraintUsername;
+
 import java.util.List;
 
 @AllArgsConstructor
@@ -22,14 +29,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
-// @PasswordMatch(password = "password", confirmedPassword = "confirmedPassword")
+@PasswordMatch(password = "password", confirmedPassword = "confirmedPassword")
 public class RegisterDto {
 
-    // @ConstraintUsername
+    @ConstraintUsername
     @NotBlank
     private String username;
 
-    // @ConstraintEmail
+    @ConstraintEmail
     @Email
     @NotBlank
     private String email;
@@ -43,19 +50,18 @@ public class RegisterDto {
     @NotBlank
     private String phoneNumber;
 
-    // @ConstraintFileId(message = "Profile ID does not exist!")
-    private Integer profileId;
+    @ConstraintFileId(message = "Profile ID does not exist!")
+    private Long profileId;
 
-    private String biography;
-
-    // @Password
+    @Password
     @NotBlank
     private String password;
 
-    // @Password
+    @Password
     @NotBlank
     private String confirmedPassword;
 
-    private List<Integer> roleIds;
+    // private List<Integer> roleIds;
+    private Integer roleIds;
 
 }

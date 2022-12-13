@@ -25,7 +25,7 @@ public interface AuthService {
      * @param registerDto contains required and optional information for register process
      * @return UserDto
      */
-    // UserDto register(RegisterDto registerDto);
+    UserDto register(RegisterDto registerDto);
 
 
 
