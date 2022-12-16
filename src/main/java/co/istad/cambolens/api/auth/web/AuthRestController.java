@@ -129,6 +129,31 @@ public class AuthRestController {
         return ResponseEntity.ok(rest);
     }
 
+    @GetMapping("reset-password")
+    String doVerifyForgotPassword(@RequestParam("email") String email,
+                        @RequestParam("token") String token) {
+
+        authService.verifyForgotPassword(email, token);
+
+        return "Reset Your Password";
+    }
+
+    @PutMapping("/reset-password")
+    ResponseEntity<?> resetPassword(@Valid @RequestParam("email") String email,
+                    @RequestParam("token") String token, @RequestBody ResetPasswordDto resetPasswordDto) {
+
+        authService.resetPassword(email, token, resetPasswordDto);
+
+        var rest = new HashMap<String, Object>();
+        rest.put("status", true);
+        rest.put("code", HttpStatus.OK.value());
+        rest.put("message", "Password has been reseted successfully.");
+        rest.put("timestamp", DateTimeUtils.getTS());
+
+        return ResponseEntity.ok(rest);
+    }
+
+
     @PutMapping("/change-profile")
     ResponseEntity<?> changeProfile(@Valid @RequestBody ProfileDto profileDto) {
 

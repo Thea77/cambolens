@@ -38,6 +38,10 @@ public interface AuthService {
     void changePassword(ChangePasswordDto changePasswordDto);
 
     void forgotPassword(String email) throws MessagingException, UnsupportedEncodingException;;
+   
+    void verifyForgotPassword(String email, String resetToken);
+
+    void resetPassword(String email, String resetToken, ResetPasswordDto resetPasswordDto);
 
     void changeProfile(ProfileDto profileDto);
 

@@ -25,14 +25,6 @@ import lombok.ToString;
 @PasswordMatch(password = "newPassword", confirmedPassword = "confirmedPassword")
 public class ResetPasswordDto {
     
-    // private static final int EXPIRATION = 60 * 24;
-
-    // private Date expiryDate;
-    
-    // @Email
-    // @NotBlank
-    // private String email;
-
     @Password
     @NotBlank
     private String newPassword;
@@ -41,5 +33,4 @@ public class ResetPasswordDto {
     @NotBlank
     private String confirmedPassword;
 
-    private String token;
 }

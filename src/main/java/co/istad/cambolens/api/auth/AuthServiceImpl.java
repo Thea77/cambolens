@@ -82,10 +82,6 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-   
-
-
-
     @Override
     public AuthDto logIn(LogInDto logInDto) {
 
@@ -215,47 +211,59 @@ public class AuthServiceImpl implements AuthService {
         userRepository.updateIsEnabledWhereId(user.getId(), true);
     }
 
-        @Override
-        public void forgotPassword(String email)throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+    @Override
+    public void forgotPassword(String email)
+            throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
 
-                var random = new Random();
-                String token = String.format("%6d", random.nextInt(999999));
-        
-                var user = userRepository.selectWhereUsernameOrEmail(email, false)
-                        .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
-                user.setVerificationCode(token);
-        
-                userRepository.updateVerificationCodeWhereId(user.getId(), user.getVerificationCode());
-        
-                EmailDto<?> emailDto = EmailDto.builder()
-                        .receiver(email)
-                        .subject("Email Verification")
-                        .templateName("email/email-confirmation")
-                        .additionalInfo(user)
-                        .build();
-        
-                emailService.sendEmail(emailDto);
-            
-        }
-    // @Override
-    // public void resetPassword(ResetPasswordDto resetPasswordDto) {
-        
-    //         // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    //         // CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
-    //         Optional<User> user = userRepository.selectWhereUsernameOrEmail(resetPasswordDto.getEmail(), true);
-           
-    //         if(!user.isPresent()){
-    //             String reason = "Reset password is failed!";
-    //                 Throwable cause = new Throwable("Your email not found!");
-    //                 throw new BadCredentialsException(reason, cause);
-    //         }
-    //         Long userId= user.get().getId();
-    //     //    System.out.println("aaaaID"+ userId);
-    //         String encodedPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
+        var random = new Random();
+        String token = String.format("%6d", random.nextInt(999999));
 
-    //         userRepository.updatePasswordWhereId(userId, encodedPassword);
+        var user = userRepository.selectWhereUsernameOrEmail(email, true)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+       
+            user.setResetToken(token);
 
-    // }
+        userRepository.updateResetTokenWhereId(user.getId(), user.getResetToken());
+
+        EmailDto<?> emailDto = EmailDto.builder()
+                .receiver(email)
+                .subject("Forgot Password")
+                .templateName("forgotPassword/forgotPassword")
+                .additionalInfo(user)
+                .build();
+
+        emailService.sendEmail(emailDto);
+
+    }
+
+    @Override
+    public void verifyForgotPassword(String email, String resetToken) {
+        User user = userRepository.selectWhereEmailAndResetToken(email, resetToken)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+
+        // userRepository.updateResetTokenWhereId(user.getId(),null);
+        
+
+    }
+
+    @Override
+    public void resetPassword(String email, String resetToken, ResetPasswordDto resetPasswordDto) {
+
+    // Authentication auth =    SecurityContextHolder.getContext().getAuthentication();
+    // CustomUserSecurity customUserSecurity = (CustomUserSecurity)
+    // auth.getPrincipal();
+    System.out.println("token"+resetToken);
+    User user = userRepository.selectWhereEmailAndResetToken(email, resetToken)
+    .orElseThrow(() -> new UsernameNotFoundException("Your email not found!!"));
+
+    Long userId= user.getId();
+    // System.out.println("aaaaID"+ userId);
+    String encodedPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
+
+    userRepository.updatePasswordWhereId(userId, encodedPassword);
+    userRepository.updateResetTokenWhereId(user.getId(),null);
+
+    }
 
     @Override
     public void changeProfile(ProfileDto profileDto) {

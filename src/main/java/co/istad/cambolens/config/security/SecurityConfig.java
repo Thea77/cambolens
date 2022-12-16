@@ -63,7 +63,8 @@ public class SecurityConfig {
                 .permitAll()
                 .antMatchers("/api/v1/auth/login",
                         "/api/v1/auth/register",
-                        "/api/v1/auth/reset-password",
+                        "/api/v1/auth/forgot-password",
+                        "/api/v1/auth/reset-password",                       
                         "/api/v1/auth/send-email-confirmation",
                         "/api/v1/auth/verify-email",
                         "/api/v1/users/me")

@@ -30,4 +30,5 @@ public class User {
     private Boolean isEnabled;
     private String verificationCode;
     private List<Role> roles;
+    private String resetToken;
 }

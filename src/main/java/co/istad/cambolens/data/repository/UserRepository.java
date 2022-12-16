@@ -22,6 +22,7 @@ public interface UserRepository {
         @Result(column = "given_name", property = "givenName"),
         @Result(column = "phone_number", property = "phoneNumber"),
         @Result(column = "is_enabled", property = "isEnabled"),
+        @Result(column = "reset_token", property = "resetToken"),
         @Result(column = "profile", property = "profile", one = @One(select = "selectUserProfile")),
         @Result(column = "id", property = "roles", many = @Many(select = "selectUserRoles"))
 })
@@ -69,10 +70,17 @@ public interface UserRepository {
     @ResultMap("userResultMap")
     Optional<User> selectWhereEmailAndVerificationCode(@Param("email") String email, @Param("verificationCode") String verificationCode);
 
+    //verify email for reset password
+    @Select("SELECT * FROM users WHERE email = #{email} AND reset_token = #{resetToken}")
+    @ResultMap("userResultMap")
+    Optional<User> selectWhereEmailAndResetToken(@Param("email") String email, @Param("resetToken") String resetToken);
+
     
     @Update("UPDATE users SET verification_code = #{verificationCode} WHERE id = #{id}")
     void updateVerificationCodeWhereId(@Param("id") Long id, @Param("verificationCode") String verificationCode);
     
+    @Update("UPDATE users SET reset_token = #{resetToken} WHERE id = #{id}")
+    void updateResetTokenWhereId(@Param("id") Long id, @Param("resetToken") String resetToken);
     
     @Update("UPDATE users SET is_enabled = #{isEnabled} WHERE id = #{id}")
     @ResultMap("userResultMap")
