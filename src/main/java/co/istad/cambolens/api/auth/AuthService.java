@@ -4,6 +4,7 @@ import co.istad.cambolens.api.auth.web.AuthDto;
 import co.istad.cambolens.api.auth.web.ChangePasswordDto;
 import co.istad.cambolens.api.auth.web.LogInDto;
 import co.istad.cambolens.api.auth.web.RegisterDto;
+import co.istad.cambolens.api.auth.web.ResetPasswordDto;
 import co.istad.cambolens.api.user.dto.ProfileDto;
 import co.istad.cambolens.api.user.dto.UserDto;
 
@@ -36,6 +37,7 @@ public interface AuthService {
      */
     void changePassword(ChangePasswordDto changePasswordDto);
 
+    void forgotPassword(String email) throws MessagingException, UnsupportedEncodingException;;
 
     void changeProfile(ProfileDto profileDto);
 

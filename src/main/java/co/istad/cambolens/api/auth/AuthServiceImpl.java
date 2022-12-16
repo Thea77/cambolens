@@ -4,6 +4,7 @@ import co.istad.cambolens.api.auth.web.AuthDto;
 import co.istad.cambolens.api.auth.web.ChangePasswordDto;
 import co.istad.cambolens.api.auth.web.LogInDto;
 import co.istad.cambolens.api.auth.web.RegisterDto;
+import co.istad.cambolens.api.auth.web.ResetPasswordDto;
 import co.istad.cambolens.api.email.EmailServiceImpl;
 import co.istad.cambolens.api.email.web.EmailDto;
 // import co.istad.cambolens.api.email.EmailServiceImpl;
@@ -48,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final FileServiceImpl fileServiceImpl;
     private final EmailServiceImpl emailService;
-    
+
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
@@ -81,20 +82,23 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    
+   
+
+
+
     @Override
     public AuthDto logIn(LogInDto logInDto) {
 
         // System.out.println("Login = " + logInDto);
 
         // Get user data
-        Authentication authentication = daoAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(logInDto.getUsername(), logInDto.getPassword()));
+        Authentication authentication = daoAuthenticationProvider
+                .authenticate(new UsernamePasswordAuthenticationToken(logInDto.getUsername(), logInDto.getPassword()));
         CustomUserSecurity customUserSecurity = (CustomUserSecurity) authentication.getPrincipal();
-   
 
         UserDto userDto = userMapper.fromModel(customUserSecurity.getUser());
         // System.out.println("myUser"+userDto);
-        
+
         userDto.getProfile().buildNameAndUri(fileBaseUri);
 
         // generated Toekn
@@ -112,16 +116,15 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-
-
     /**
      * Generate token JWT
+     * 
      * @param logInDto
      * @return
      */
-     private String buildAuthorizationHeader(LogInDto logInDto) {
-        
-     // check if valid user
+    private String buildAuthorizationHeader(LogInDto logInDto) {
+
+        // check if valid user
         try {
             authenticate(logInDto.getUsername(), logInDto.getPassword());
 
@@ -138,15 +141,15 @@ public class AuthServiceImpl implements AuthService {
         // System.out.println("Token="+ token);
         return String.format(token);
     }
-      
 
-        /**
-         * check Username Password Authentication Token
-         * @param username
-         * @param password
-         * @throws Exception
-         */
- private void authenticate(String username, String password) throws Exception {
+    /**
+     * check Username Password Authentication Token
+     * 
+     * @param username
+     * @param password
+     * @throws Exception
+     */
+    private void authenticate(String username, String password) throws Exception {
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -157,9 +160,6 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-
-
-
     @Override
     public UserDto register(RegisterDto registerDto) {
 
@@ -167,12 +167,12 @@ public class AuthServiceImpl implements AuthService {
         user.setProfile(new File(registerDto.getProfileId()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setIsEnabled(false);
-        registerDto.setRoleIds(2); //role EDITOR
+        registerDto.setRoleIds(2); // role EDITOR
         userRepository.insert(user);
 
         // registerDto.getRoleIds().forEach(roleId -> {
-        //     userRepository.insertUserRole(user.getId(), roleId);
-            
+        // userRepository.insertUserRole(user.getId(), roleId);
+
         // });
         userRepository.insertUserRole(user.getId(), registerDto.getRoleIds());
 
@@ -182,15 +182,15 @@ public class AuthServiceImpl implements AuthService {
         return userDto;
     }
 
-
-
     @Override
-    public void sendEmailConfirmation(String email) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+    public void sendEmailConfirmation(String email)
+            throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
 
         var random = new Random();
         String code = String.format("%6d", random.nextInt(999999));
 
-        var user = userRepository.selectWhereUsernameOrEmail(email, false).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+        var user = userRepository.selectWhereUsernameOrEmail(email, false)
+                .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
         user.setVerificationCode(code);
 
         userRepository.updateVerificationCodeWhereId(user.getId(), user.getVerificationCode());
@@ -205,30 +205,70 @@ public class AuthServiceImpl implements AuthService {
         emailService.sendEmail(emailDto);
     }
 
-
     @Override
     public void verifyEmail(String email, String verificationCode) {
 
         User user = userRepository.selectWhereEmailAndVerificationCode(email, verificationCode)
                 .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
-        
+
         userRepository.updateVerificationCodeWhereId(user.getId(), null);
         userRepository.updateIsEnabledWhereId(user.getId(), true);
     }
 
+        @Override
+        public void forgotPassword(String email)throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+
+                var random = new Random();
+                String token = String.format("%6d", random.nextInt(999999));
+        
+                var user = userRepository.selectWhereUsernameOrEmail(email, false)
+                        .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+                user.setVerificationCode(token);
+        
+                userRepository.updateVerificationCodeWhereId(user.getId(), user.getVerificationCode());
+        
+                EmailDto<?> emailDto = EmailDto.builder()
+                        .receiver(email)
+                        .subject("Email Verification")
+                        .templateName("email/email-confirmation")
+                        .additionalInfo(user)
+                        .build();
+        
+                emailService.sendEmail(emailDto);
+            
+        }
+    // @Override
+    // public void resetPassword(ResetPasswordDto resetPasswordDto) {
+        
+    //         // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //         // CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
+    //         Optional<User> user = userRepository.selectWhereUsernameOrEmail(resetPasswordDto.getEmail(), true);
+           
+    //         if(!user.isPresent()){
+    //             String reason = "Reset password is failed!";
+    //                 Throwable cause = new Throwable("Your email not found!");
+    //                 throw new BadCredentialsException(reason, cause);
+    //         }
+    //         Long userId= user.get().getId();
+    //     //    System.out.println("aaaaID"+ userId);
+    //         String encodedPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
+
+    //         userRepository.updatePasswordWhereId(userId, encodedPassword);
+
+    // }
 
     @Override
     public void changeProfile(ProfileDto profileDto) {
-    
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
-    
-            Long userId = customUserSecurity.getUser().getId();
+        CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
+
+        Long userId = customUserSecurity.getUser().getId();
 
         Long profileId = profileDto.getProfileId();
 
         userRepository.updateProfileWhereUserId(userId, profileId);
-        
+
     }
 
 }

@@ -115,6 +115,19 @@ public class AuthRestController {
         return ResponseEntity.ok(rest);
     }
 
+    @PostMapping("/forgot-password")
+    ResponseEntity<?> doForgotPassword(@Valid @RequestBody EmailConfirmationDto emailConfirmationDto) throws MessagingException, UnsupportedEncodingException, ResponseStatusException {
+
+        authService.forgotPassword(emailConfirmationDto.getValue());
+
+        var rest = new HashMap<String, Object>();
+        rest.put("status", true);
+        rest.put("code", HttpStatus.OK.value());
+        rest.put("message", "Please confirm your email and reset password.");
+        rest.put("timestamp", DateTimeUtils.getTS());
+
+        return ResponseEntity.ok(rest);
+    }
 
     @PutMapping("/change-profile")
     ResponseEntity<?> changeProfile(@Valid @RequestBody ProfileDto profileDto) {
