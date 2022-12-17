@@ -107,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthDto.builder()
                 .user(userDto)
-                .roles(roles)
+                .autRoles(roles)
                 .token(myToken)
                 .build();
     }
@@ -163,15 +163,14 @@ public class AuthServiceImpl implements AuthService {
         user.setProfile(new File(registerDto.getProfileId()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setIsEnabled(false);
-        registerDto.setRoleIds(2); // role EDITOR
+        // registerDto.setRoleIds(2); // role EDITOR
         userRepository.insert(user);
 
-        // registerDto.getRoleIds().forEach(roleId -> {
-        // userRepository.insertUserRole(user.getId(), roleId);
-
-        // });
-        userRepository.insertUserRole(user.getId(), registerDto.getRoleIds());
-
+        registerDto.getRoleIds().forEach(roleId -> {
+            userRepository.insertUserRole(user.getId(), roleId);
+            
+        });
+        
         UserDto userDto = userMapper.fromModel(user);
         userDto.setProfile(fileServiceImpl.getFileByID(registerDto.getProfileId()));
 

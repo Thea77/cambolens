@@ -69,7 +69,7 @@ public class SecurityConfig {
                         "/api/v1/auth/verify-email",
                         "/api/v1/users/me")
                 .permitAll()
-                .antMatchers("/api/v1/users/**").hasAnyRole("ADMIN")
+                .antMatchers("/api/v1/users/**", "/api/v1/users/create-users").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 // .httpBasic()

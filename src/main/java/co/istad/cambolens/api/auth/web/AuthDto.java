@@ -21,7 +21,7 @@ public class AuthDto {
 
     private UserDto user;
 
-    private List<String> roles;
+    private List<String> autRoles;
 
     private String token;
 

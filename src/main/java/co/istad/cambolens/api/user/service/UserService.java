@@ -2,6 +2,9 @@ package co.istad.cambolens.api.user.service;
 
 import java.util.List;
 
+import com.github.pagehelper.PageInfo;
+
+import co.istad.cambolens.api.auth.web.RegisterDto;
 import co.istad.cambolens.api.user.dto.UserDto;
 
 public interface UserService {
@@ -10,7 +13,7 @@ public interface UserService {
      * Get all user from database
      * @return List<UserDto>
      */
-    List<UserDto> getAllUsers();
+    PageInfo<UserDto> getAllUsers(int pageNum, int pageSize);
 
       /**
      * Check user by email in database
@@ -26,5 +29,7 @@ public interface UserService {
      */
     boolean checkUsername(String username);
 
+
+    UserDto createUser(RegisterDto dto);
 
 }

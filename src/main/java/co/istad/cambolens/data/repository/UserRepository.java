@@ -34,6 +34,7 @@ public interface UserRepository {
 
     @InsertProvider(type = UserProvider.class, method = "buildInsertSql")
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @ResultMap("userResultMap")
     void insert(@Param("user") User user);
 
     

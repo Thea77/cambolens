@@ -24,5 +24,6 @@ public class UserDto {
     private String givenName;
     private String phoneNumber;
     private FileDto profile;
+    private List<Role> roles;
 
 }

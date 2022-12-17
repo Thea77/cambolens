@@ -61,7 +61,8 @@ public class RegisterDto {
     @NotBlank
     private String confirmedPassword;
 
-    // private List<Integer> roleIds;
-    private Integer roleIds;
+    private List<Integer> roleIds;
+    // private Integer roleIds;
+
 
 }

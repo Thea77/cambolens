@@ -1,7 +1,9 @@
 package co.istad.cambolens.api.auth.web;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -51,6 +53,11 @@ public class AuthRestController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDto body){
+
+        List<Integer> role = new ArrayList<Integer>();
+        role.add(2);
+        body.setRoleIds(role); 
+       
         UserDto userDto = authService.register(body);
         // log.info("Body={}",body);
         Rest<Object> rest = Rest.ok()
