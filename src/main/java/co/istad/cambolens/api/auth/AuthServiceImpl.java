@@ -15,6 +15,7 @@ import co.istad.cambolens.api.user.dto.ProfileDto;
 // import co.istad.cambolens.api.file.service.ImageServiceImpl;
 import co.istad.cambolens.api.user.dto.UserDto;
 import co.istad.cambolens.api.user.mapper.UserMapper;
+import co.istad.cambolens.api.user.Role;
 import co.istad.cambolens.api.user.User;
 import co.istad.cambolens.config.security.CustomUserSecurity;
 import co.istad.cambolens.data.repository.UserRepository;
@@ -95,7 +96,9 @@ public class AuthServiceImpl implements AuthService {
         UserDto userDto = userMapper.fromModel(customUserSecurity.getUser());
         // System.out.println("myUser"+userDto);
 
-        userDto.getProfile().buildNameAndUri(fileBaseUri);
+        if(userDto.getProfile() != null){
+            userDto.getProfile().buildNameAndUri(fileBaseUri);
+        }
 
         // generated Toekn
         String myToken = this.buildAuthorizationHeader(logInDto);

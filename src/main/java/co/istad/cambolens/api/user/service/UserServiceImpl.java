@@ -2,9 +2,11 @@ package co.istad.cambolens.api.user.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,9 @@ import co.istad.cambolens.api.file.service.FileServiceImpl;
 import co.istad.cambolens.api.user.Role;
 import co.istad.cambolens.api.user.User;
 import co.istad.cambolens.api.user.dto.UserDto;
+import co.istad.cambolens.api.user.dto.UserEditProfile;
 import co.istad.cambolens.api.user.mapper.UserMapper;
+import co.istad.cambolens.config.security.CustomUserSecurity;
 import co.istad.cambolens.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -33,11 +37,12 @@ public class UserServiceImpl implements UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FileServiceImpl fileServiceImpl;
     private final RoleRepository roleRepository;
+    
 
 
 
-    // @Value("${file.uri}")
-    // private String fileBaseUri;
+    @Value("${file.uri}")
+    private String fileBaseUri;
 
     @Override
     public PageInfo<UserDto> getAllUsers(int pageNum, int pageSize) {
@@ -62,6 +67,16 @@ public class UserServiceImpl implements UserService{
         return userRepository.existsWhereUsername(username);
     }
 
+   @Override
+   public UserDto getUserById(Long id) {
+        User user = userRepository.selectWhereId(id).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+        UserDto userDto = userMapper.fromModel(user);
+        userDto.getProfile().buildNameAndUri(fileBaseUri);
+    
+        return userDto;
+   }
+
+        
 
     @Override
     public UserDto createUser(RegisterDto body) {
@@ -91,5 +106,42 @@ public class UserServiceImpl implements UserService{
         return userDto;
     }
 
+    @Override
+    public UserEditProfile editUserProfile(UserEditProfile body ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserSecurity customUserSecurity = (CustomUserSecurity) auth.getPrincipal();
 
+        Long userId = customUserSecurity.getUser().getId();
+
+        User user = userMapper.forEditProfileToModel(body);
+        userRepository.updateUserProfile(userId, user);
+
+        return body;
+    }
+
+    @Override
+    public UserDto enableAndDisableUser(Long id, Boolean isEnabled) {
+
+        User user = userRepository.selectUserWhereId(id).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+        UserDto userDto = userMapper.fromModel(user);
+        userRepository.updateIsEnabledWhereId(id, isEnabled);
+        
+        userDto.getProfile().buildNameAndUri(fileBaseUri);
+
+        return userDto;
+    }
+
+
+    @Override
+    public UserDto deleteUserById(Long id) {
+
+        User user = userRepository.selectWhereId(id).orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
+
+        userRepository.deleteWhereId(id);
+
+        UserDto userDto = userMapper.fromModel(user);
+        userDto.getProfile().buildNameAndUri(fileBaseUri);
+
+        return userDto;
+    }
 }

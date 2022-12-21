@@ -68,6 +68,16 @@ public class UserProvider {
         }}.toString();
     }
 
+    public String buildEditUserProfileSQL(){
+        return new SQL(){{
+            UPDATE("users");
+            SET("family_name = #{user.familyName}");
+            SET("given_name = #{user.givenName}");
+            SET("phone_number = #{user.phoneNumber}");
+            SET("email = #{user.email}");
+            WHERE("id = #{id}");
+        }}.toString();
+    }
     
     public String buildUpdatePasswordWhereIdSql() {
         return new SQL() {{
@@ -76,6 +86,7 @@ public class UserProvider {
             WHERE("id = #{id}");
         }}.toString();
     }
+
 
     public String buildUpdateCoverByIdSql() {
         return new SQL() {

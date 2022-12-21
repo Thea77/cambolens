@@ -66,9 +66,9 @@ public class SecurityConfig {
                         "/api/v1/auth/forgot-password",
                         "/api/v1/auth/reset-password",                       
                         "/api/v1/auth/send-email-confirmation",
-                        "/api/v1/auth/verify-email",
-                        "/api/v1/users/me")
+                        "/api/v1/auth/verify-email")
                 .permitAll()
+                .antMatchers("/api/v1/users/me", "/api/v1/files/**").hasAnyRole("ADMIN","EDITOR")
                 .antMatchers("/api/v1/users/**", "/api/v1/users/create-users").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

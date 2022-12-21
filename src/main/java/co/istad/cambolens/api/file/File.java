@@ -22,6 +22,7 @@ public class File {
     private String name;
     private String uri;
     private String extension;
-    private Long size;
+    private Float size;
     private Boolean isEnabled;
+    private Integer download;
 }

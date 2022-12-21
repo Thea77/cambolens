@@ -28,7 +28,18 @@ public interface UserRepository {
 })
     List<User> select();
 
+    @Select("SELECT * FROM users WHERE id = #{id} AND is_enabled = TRUE")
+    @ResultMap("userResultMap")
+    Optional<User> selectWhereId(@Param("id") Long id);
+
+    //for Ban or Enable Users
+    @Select("SELECT * FROM users WHERE id = #{id}")
+    @ResultMap("userResultMap")
+    Optional<User> selectUserWhereId(@Param("id") Long id);
+    
+
     @InsertProvider(type = UserProvider.class, method = "buildInsertUserRoleSql")
+    // @ResultMap("userResultMap")
     void insertUserRole(@Param("userId") Long userId, @Param("roleId") Integer roleId);
 
 
@@ -37,6 +48,9 @@ public interface UserRepository {
     @ResultMap("userResultMap")
     void insert(@Param("user") User user);
 
+    @UpdateProvider(type = UserProvider.class, method = "buildEditUserProfileSQL")
+    @ResultMap("userResultMap")
+    void updateUserProfile(@Param("id") Long id, @Param("user") User user);
     
     @SelectProvider(type = UserProvider.class ,method = "buildSelectUserByUserName")
     @ResultMap("userResultMap")
@@ -78,9 +92,11 @@ public interface UserRepository {
 
     
     @Update("UPDATE users SET verification_code = #{verificationCode} WHERE id = #{id}")
+    @ResultMap("userResultMap")
     void updateVerificationCodeWhereId(@Param("id") Long id, @Param("verificationCode") String verificationCode);
     
     @Update("UPDATE users SET reset_token = #{resetToken} WHERE id = #{id}")
+    @ResultMap("userResultMap")
     void updateResetTokenWhereId(@Param("id") Long id, @Param("resetToken") String resetToken);
     
     @Update("UPDATE users SET is_enabled = #{isEnabled} WHERE id = #{id}")
@@ -89,9 +105,13 @@ public interface UserRepository {
     
 
     @UpdateProvider(type = UserProvider.class, method = "buildUpdateCoverByIdSql")
+    @ResultMap("userResultMap")
     void updateProfileWhereUserId(@Param("id") Long id, @Param("profileId") Long profileId);
 
 
     @Select("SELECT EXISTS (SELECT * FROM users WHERE id = #{id})")
     boolean existsById(@Param("id") Long id);
+
+    @Delete("DELETE FROM users WHERE id = #{id}")
+    void deleteWhereId(@Param("id") Long id);
 }

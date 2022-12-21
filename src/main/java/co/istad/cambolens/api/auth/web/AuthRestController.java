@@ -26,9 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import co.istad.cambolens.api.auth.AuthServiceImpl;
-import co.istad.cambolens.api.auth.TokenRequest;
-import co.istad.cambolens.api.auth.TokenResponse;
-import co.istad.cambolens.api.auth.jwt.JwtTokenUtil;
 import co.istad.cambolens.shared.rest.Rest;
 import co.istad.cambolens.api.user.dto.ProfileDto;
 import co.istad.cambolens.api.user.dto.UserDto;
@@ -43,10 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthRestController {
-    // private final UserServiceImp userServiceImp;
-    // private final JwtTokenUtil jwtTokenUtil;
-    // private final UserDetailsService userDetailsService;
-    // private final AuthenticationManager authenticationManager;
 
     private final AuthServiceImpl authService;
 
@@ -57,7 +50,7 @@ public class AuthRestController {
         List<Integer> role = new ArrayList<Integer>();
         role.add(2);
         body.setRoleIds(role); 
-       
+
         UserDto userDto = authService.register(body);
         // log.info("Body={}",body);
         Rest<Object> rest = Rest.ok()

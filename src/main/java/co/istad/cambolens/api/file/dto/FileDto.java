@@ -18,8 +18,9 @@ public class FileDto {
     private String name;
     private String uri;
     private String extension;
-    private Long size;
-    //private Boolean isEnabled;
+    private Float size;
+    private Integer download;
+    private Boolean isEnabled;
 
     public void buildNameAndUri(String baseUri) {
         extension = extension.trim();

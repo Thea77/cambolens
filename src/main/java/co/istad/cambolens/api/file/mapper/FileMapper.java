@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
+import com.github.pagehelper.PageInfo;
+
 import co.istad.cambolens.api.file.File;
 import co.istad.cambolens.api.file.dto.FileDto;
 
@@ -15,6 +17,8 @@ public interface FileMapper {
 
     List<File> toModelList(List<FileDto> fileDtoList);
 
-    List<FileDto> fromModelList(List<File> files);
+    PageInfo<FileDto> fromModelList(PageInfo<File> files);
+
+    List<FileDto> toFileDtoList(List<File> files);
 
 }
