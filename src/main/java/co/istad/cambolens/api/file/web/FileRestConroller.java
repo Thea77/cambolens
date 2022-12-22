@@ -1,6 +1,5 @@
 package co.istad.cambolens.api.file.web;
 
-import java.net.http.HttpHeaders;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -114,7 +113,7 @@ public class FileRestConroller {
         return ResponseEntity.ok(rest);
     }
 
-    @GetMapping("/download/{uuid:.+}")
+    @GetMapping("/download/{uuid}")
     public ResponseEntity<?> downloadFile(@PathVariable String uuid) {
        FileDto fileDto = fileServiceImpl.countDownloadImage(uuid);
         var rest = new Rest<FileDto>();
@@ -126,7 +125,7 @@ public class FileRestConroller {
         return ResponseEntity.ok(rest); 
     }
 
-    @GetMapping("/count-download/{uuid:.+}")
+    @GetMapping("/count-download/{uuid}")
     public ResponseEntity<?> doShowDownloadCount(@PathVariable String uuid) {
     FileDto fileDto = fileServiceImpl.showDownloadCount(uuid);
         var rest = new Rest<FileDto>();

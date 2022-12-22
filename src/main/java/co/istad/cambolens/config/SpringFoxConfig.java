@@ -1,5 +1,6 @@
 package co.istad.cambolens.config;
 
+
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;

@@ -24,5 +24,4 @@ public interface UserMapper {
     User forEditProfileToModel(UserEditProfile editProfile);
     
 
-
 }
