@@ -33,9 +33,6 @@ public interface PostRepository {
         @Result(column = "given_name", property = "givenName")
         @Result(column = "phone_number", property = "phoneNumber")
         @Result(column = "is_enabled", property = "isEnabled")
-        @Result(column = "reset_token", property = "resetToken")
-        // @Result(column = "profile", property = "profile", one = @One(select = "selectUserProfile"))
-        // @Result(column = "id", property = "roles", many = @Many(select = "selectUserRoles"))
     User selectPostAuthor(@Param("id") Long id);
 
     @SelectProvider(type = PostProvider.class, method = "buildSelectPostPhotoSql")

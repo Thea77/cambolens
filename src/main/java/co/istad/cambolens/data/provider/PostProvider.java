@@ -9,20 +9,23 @@ public class PostProvider {
     public String buildSelectSql(@Param("post")Post post) {
         return new SQL() {{
             SELECT("*");
-            FROM("posts");
+            FROM("posts p");
+            INNER_JOIN("users u ON p.author = u.id");
+            WHERE("u.is_enabled = TRUE");
             if (post != null) {
-                WHERE("title ILIKE '%' || #{post.title} || '%'", "is_enabled = TRUE");
                 OR();
-                WHERE("author ILIKE '%' || #{post.author} || '%'", "is_enabled = TRUE");
+                WHERE("p.title ILIKE '%' || #{post.title} || '%'", "p.is_enabled = TRUE", "u.is_enabled = TRUE");
+                OR();
+                WHERE("p.author ILIKE '%' || #{post.author} || '%'", "p.is_enabled = TRUE", "u.is_enabled = TRUE");
             }
-            ORDER_BY("id DESC");
+            ORDER_BY("p.id DESC");
 
         }}.toString();
     }
 
     public String buildSelectPostPhotoSql() {
         return new SQL() {{
-            SELECT("i.id, i.uuid, i.extension, i.size, i.is_enabled");
+            SELECT("*");
             FROM("images AS i");
             WHERE("i.id = #{id}");
         }}.toString();
@@ -39,7 +42,7 @@ public class PostProvider {
 
     public String buildSelectPostAuthorSql() {
         return new SQL() {{
-            SELECT("id,username,email,phone_number,family_name,given_name");
+            SELECT("id,username,email,phone_number,family_name,given_name,is_enabled");
             FROM("users");
             WHERE("id = #{id}");
         }}.toString();
