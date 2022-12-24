@@ -27,6 +27,33 @@ public interface PostRepository {
     })
     List<Post> select(@Param("post") Post post);
 
+    @Select("SELECT * FROM posts WHERE id = #{id}")
+    @ResultMap(value = "postResultMap")
+    Post selectById(@Param("id") Long id);
+
+    @SelectProvider(type = PostProvider.class, method = "buildSelectTopDownloadSql")
+    @ResultMap(value = "postResultMap")
+    List<Post> selectTopDownload(@Param("post") Post post);
+    
+
+/**
+     * Insert into posts
+     * @param post
+     */
+    @InsertProvider(type = PostProvider.class, method = "buildInsertSql")
+    @Options(useGeneratedKeys = true, keyColumn = "id",keyProperty = "id")
+    @ResultMap(value = "postResultMap")
+    void insert(@Param("post") Post post);
+
+/**
+     * Update  posts
+     * @param post
+     */
+    @UpdateProvider(type = PostProvider.class, method = "buildUpdateSql")
+    @ResultMap(value = "postResultMap")
+    void update(@Param("post") Post post);
+
+
     @SelectProvider(type = PostProvider.class, method = "buildSelectPostAuthorSql")
         @Result(column = "id", property = "id")
         @Result(column = "family_name", property = "familyName")
@@ -41,4 +68,17 @@ public interface PostRepository {
 
     @SelectProvider(type = PostProvider.class, method = "buildSelectPostCategoriesByIdSql")
     List<Category> selectPostCategoriesById(@Param("cateId") Long cateId);
+
+    @InsertProvider(type = PostProvider.class, method = "buildInsertPostCategorySql")
+    // @ResultMap(value = "bookResultMapper")
+    void insertPostCategory(@Param("postId") Long postId, @Param("cateId") Integer cateId);
+
+    @Delete("DELETE FROM posts_categories WHERE post_id = #{postId}")
+    void deletePostCategory(@Param("postId") Long postId);
+
+    @Select("SELECT EXISTS (SELECT * FROM posts WHERE id = #{id})")
+    boolean existsById(@Param("id") Long id);
+
+    @Delete("DELETE FROM posts WHERE id = #{postId}")
+    void deletePost(@Param("postId") Long postId);
 }

@@ -2,6 +2,7 @@ package co.istad.cambolens.api.post.service;
 
 import com.github.pagehelper.PageInfo;
 
+import co.istad.cambolens.api.post.web.CreatePostDto;
 import co.istad.cambolens.api.post.web.PostDto;
 import co.istad.cambolens.api.post.web.PostFilter;
 
@@ -14,4 +15,14 @@ public interface PostService {
      * @return List<BookDto>
      */
     PageInfo<PostDto> getAllposts(PostFilter postFilter, int pageNum, int pageSize);
+
+    PageInfo<PostDto> getTopDownloadPosts(PostFilter postFilter, int pageNum, int pageSize);
+
+    PostDto selectPostById(Long id);
+
+    PostDto createPost(CreatePostDto body);
+
+     PostDto updatePost(Long id,CreatePostDto body);
+
+     void deletePost(Long id);
 }

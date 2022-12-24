@@ -17,7 +17,5 @@ import lombok.ToString;
 @Builder
 public class PostFilter {
     private String title;
-    private User author;
-    private String location;
-    private Category category;
+    private String poster;
 }

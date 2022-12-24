@@ -20,9 +20,7 @@ public interface FileRepository {
      * @return
      */
     @SelectProvider(type = FileProvider.class, method = "buildSelectImageSQL")
-    @Results(id= "imageResultMapper", value = {
-        @Result(column = "is_enabled",property = "isEnabled")
-    })
+    @ResultMap("fileResultMap")
     List<File> select();
 
 
@@ -31,6 +29,11 @@ public interface FileRepository {
             @Result(column = "is_enabled", property = "isEnabled")
     })
     Optional<File> selectByID(@Param("id") Long id);
+
+
+    @Select("SELECT * FROM images WHERE id = #{id}")
+    @ResultMap("fileResultMap")
+    File selectFileByIdWithoutOpional(@Param("id") Long id);
 
 
     @SelectProvider(type = FileProvider.class, method = "buildSelectFileByUUIDSql")

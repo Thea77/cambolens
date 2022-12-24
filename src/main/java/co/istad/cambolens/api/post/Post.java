@@ -1,6 +1,7 @@
 package co.istad.cambolens.api.post;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import co.istad.cambolens.api.file.File;
@@ -20,12 +21,12 @@ import lombok.ToString;
 @ToString
 @Builder
 public class Post {
-    private Integer id;
+    private Long id;
     private User author;
     private String title;
     private String description;
     private File photo;
-    private LocalDate datePublished;
+    private Date datePublished;
     private Integer like;
     private String location;
     private Boolean isEnabled;

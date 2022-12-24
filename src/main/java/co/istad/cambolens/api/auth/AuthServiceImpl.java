@@ -15,13 +15,12 @@ import co.istad.cambolens.api.user.dto.ProfileDto;
 // import co.istad.cambolens.api.file.service.ImageServiceImpl;
 import co.istad.cambolens.api.user.dto.UserDto;
 import co.istad.cambolens.api.user.mapper.UserMapper;
-import co.istad.cambolens.api.user.Role;
+
 import co.istad.cambolens.api.user.User;
 import co.istad.cambolens.config.security.CustomUserSecurity;
 import co.istad.cambolens.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,8 +33,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import co.istad.cambolens.api.auth.TokenRequest;
-import co.istad.cambolens.api.auth.TokenResponse;
+
 import co.istad.cambolens.api.auth.jwt.JwtTokenUtil;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -96,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
         UserDto userDto = userMapper.fromModel(customUserSecurity.getUser());
         // System.out.println("myUser"+userDto);
 
-        if(userDto.getProfile() != null){
+        if (userDto.getProfile() != null) {
             userDto.getProfile().buildNameAndUri(fileBaseUri);
         }
 
@@ -171,9 +169,9 @@ public class AuthServiceImpl implements AuthService {
 
         registerDto.getRoleIds().forEach(roleId -> {
             userRepository.insertUserRole(user.getId(), roleId);
-            
+
         });
-        
+
         UserDto userDto = userMapper.fromModel(user);
         userDto.setProfile(fileServiceImpl.getFileByID(registerDto.getProfileId()));
 
@@ -222,8 +220,8 @@ public class AuthServiceImpl implements AuthService {
 
         var user = userRepository.selectWhereUsernameOrEmail(email, true)
                 .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
-       
-            user.setResetToken(token);
+
+        user.setResetToken(token);
 
         userRepository.updateResetTokenWhereId(user.getId(), user.getResetToken());
 
@@ -240,30 +238,29 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void verifyForgotPassword(String email, String resetToken) {
-        User user = userRepository.selectWhereEmailAndResetToken(email, resetToken)
+        userRepository.selectWhereEmailAndResetToken(email, resetToken)
                 .orElseThrow(() -> new UsernameNotFoundException("User is not found!"));
 
         // userRepository.updateResetTokenWhereId(user.getId(),null);
-        
 
     }
 
     @Override
     public void resetPassword(String email, String resetToken, ResetPasswordDto resetPasswordDto) {
 
-    // Authentication auth =    SecurityContextHolder.getContext().getAuthentication();
-    // CustomUserSecurity customUserSecurity = (CustomUserSecurity)
-    // auth.getPrincipal();
-    System.out.println("token"+resetToken);
-    User user = userRepository.selectWhereEmailAndResetToken(email, resetToken)
-    .orElseThrow(() -> new UsernameNotFoundException("Your email not found!!"));
+        // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // CustomUserSecurity customUserSecurity = (CustomUserSecurity)
+        // auth.getPrincipal();
+        // System.out.println("token"+resetToken);
+        User user = userRepository.selectWhereEmailAndResetToken(email, resetToken)
+                .orElseThrow(() -> new UsernameNotFoundException("Your email not found!!"));
 
-    Long userId= user.getId();
-    // System.out.println("aaaaID"+ userId);
-    String encodedPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
+        Long userId = user.getId();
+        // System.out.println("aaaaID"+ userId);
+        String encodedPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
 
-    userRepository.updatePasswordWhereId(userId, encodedPassword);
-    userRepository.updateResetTokenWhereId(user.getId(),null);
+        userRepository.updatePasswordWhereId(userId, encodedPassword);
+        userRepository.updateResetTokenWhereId(user.getId(), null);
 
     }
 

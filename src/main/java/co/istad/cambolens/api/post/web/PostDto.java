@@ -1,9 +1,11 @@
 package co.istad.cambolens.api.post.web;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import co.istad.cambolens.api.file.File;
+import co.istad.cambolens.api.file.dto.FileDto;
 import co.istad.cambolens.api.user.User;
+import co.istad.cambolens.api.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,11 +21,12 @@ import lombok.ToString;
 @Builder
 public class PostDto {
    
-    private User author;
+    private Long id;
     private String title;
     private String description;
-    private File photo;
-    private LocalDate datePublished;
+    private FileDto photo;
+    private UserDto author;
+    private Date datePublished;
     private Integer like;
     private String location;
 
