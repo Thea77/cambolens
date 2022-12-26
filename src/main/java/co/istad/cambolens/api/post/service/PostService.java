@@ -1,5 +1,7 @@
 package co.istad.cambolens.api.post.service;
 
+import java.util.List;
+
 import com.github.pagehelper.PageInfo;
 
 import co.istad.cambolens.api.post.web.CreatePostDto;
@@ -16,7 +18,7 @@ public interface PostService {
      */
     PageInfo<PostDto> getAllposts(PostFilter postFilter, int pageNum, int pageSize);
 
-    PageInfo<PostDto> getTopDownloadPosts(PostFilter postFilter, int pageNum, int pageSize);
+    List<PostDto> getTopDownloadPosts();
 
     PostDto selectPostById(Long id);
 

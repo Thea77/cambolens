@@ -31,9 +31,15 @@ public interface PostRepository {
     @ResultMap(value = "postResultMap")
     Post selectById(@Param("id") Long id);
 
-    @SelectProvider(type = PostProvider.class, method = "buildSelectTopDownloadSql")
+    // @SelectProvider(type = PostProvider.class, method = "buildSelectTopDownloadSql")
+    @Select("SELECT * FROM posts p"+
+                    " INNER JOIN users u ON p.author = u.id" +
+                    " INNER JOIN images i ON p.photo = i.id" +
+                    " WHERE u.is_enabled = TRUE" +
+                    " ORDER BY i.download DESC" +
+                    " LIMIT 10 ")
     @ResultMap(value = "postResultMap")
-    List<Post> selectTopDownload(@Param("post") Post post);
+    List<Post> selectTopDownload();
     
 
 /**

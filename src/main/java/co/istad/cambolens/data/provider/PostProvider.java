@@ -23,24 +23,17 @@ public class PostProvider {
         }}.toString();
     }
 
-    public String buildSelectTopDownloadSql(@Param("post")Post post) {
-        return new SQL() {{
-            SELECT("*");
-            FROM("posts p");
-            INNER_JOIN("users u ON p.author = u.id");
-            INNER_JOIN("images i ON p.photo = i.id");
-            WHERE("u.is_enabled = TRUE");
-            if (post != null) {
-                AND();
-                WHERE("p.title ILIKE '%' || #{post.title} || '%'", "p.is_enabled = TRUE", "u.is_enabled = TRUE");
-                OR();
-                WHERE("p.author ILIKE '%' || #{post.author} || '%'", "p.is_enabled = TRUE", "u.is_enabled = TRUE");
-            }
-             ORDER_BY("i.download DESC");
-            
-
-        }}.toString();
-    }
+    // public String buildSelectTopDownloadSql() {
+    //     return new SQL() {{
+    //         SELECT("*");
+    //         FROM("posts p");
+    //         INNER_JOIN("users u ON p.author = u.id");
+    //         INNER_JOIN("images i ON p.photo = i.id");
+    //         WHERE("u.is_enabled = TRUE");
+    //         ORDER_BY("i.download DESC");
+    //         // LIMIT(5);
+    //     }}.toString();
+    // }
     
 
     public String buildInsertSql(){

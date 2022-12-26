@@ -1,5 +1,7 @@
 package co.istad.cambolens.api.post.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
 import com.github.pagehelper.PageInfo;
@@ -13,6 +15,8 @@ import co.istad.cambolens.api.post.web.PostFilter;
 public interface PostMapper {
 
     PageInfo<PostDto> fromModelList(PageInfo<Post> posts);
+
+    List<PostDto> toPostDtoForTopDownload(List<Post> list);
 
     PostDto fromModel(Post post);
 

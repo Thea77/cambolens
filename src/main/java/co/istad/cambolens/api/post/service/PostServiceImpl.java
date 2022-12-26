@@ -75,22 +75,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PageInfo<PostDto> getTopDownloadPosts(PostFilter postFilter, int pageNum, int pageSize) {
-        Post post = postMapper.fromPostFilter(postFilter);
+    public List<PostDto> getTopDownloadPosts() {
+        List<Post> postsList = postRepository.selectTopDownload();
+        List<PostDto> dtos = postMapper.toPostDtoForTopDownload(postsList);
 
-        Page<Post> postList = PageHelper.startPage(pageNum, pageSize).doSelectPage(() -> postRepository.selectTopDownload(post));
-        PageInfo<Post> postListPageInfo = new PageInfo<>(postList);
 
-        PageInfo<PostDto> postDtoListPageInfo = postMapper.fromModelList(postListPageInfo);
-
-        for (PostDto postDto : postDtoListPageInfo.getList()) {
+        for (PostDto postDto : dtos) {
             String fileName = postDto.getPhoto().getUuid() + "." + postDto.getPhoto().getExtension().trim();
             String fileUri = uri + fileName;
             postDto.getPhoto().setName(fileName);
             postDto.getPhoto().setUri(fileUri);
 
         }
-        return postDtoListPageInfo;
+           
+        return dtos;
     }
 
     @Override

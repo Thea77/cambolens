@@ -1,5 +1,7 @@
 package co.istad.cambolens.api.post.web;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -44,13 +46,11 @@ public class PostRestController {
     }
 
     @GetMapping("/top-download")
-    ResponseEntity<?> doGetTopDownloadPosts(@RequestBody(required = false) PostFilter postFilter,
-                               @RequestParam(required = false, defaultValue = "1") int pageNum,
-                               @RequestParam(required = false, defaultValue = "10") int pageSize) {
+    ResponseEntity<?> doGetTopDownloadPosts() {
 
-        PageInfo<PostDto> postDtoList = postServiceImpl.getTopDownloadPosts(postFilter, pageNum, pageSize);
+        List<PostDto> postDtoList = postServiceImpl.getTopDownloadPosts();
 
-        Rest<PageInfo<PostDto>> rest = new Rest<>();
+        Rest<List<PostDto>> rest = new Rest<>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("Top 10 Posts Downloaded have been fetched");
