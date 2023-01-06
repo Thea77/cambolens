@@ -27,6 +27,9 @@ public interface UserService {
     UserDto getUserById(Long id);
 
 
+    UserDto getUserByUsernameOrEmail(String usernameOrEmail);
+
+
     UserEditProfile editUserProfile(UserEditProfile editProfile);
 
       /**

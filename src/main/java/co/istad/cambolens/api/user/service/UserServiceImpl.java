@@ -47,16 +47,35 @@ public class UserServiceImpl implements UserService{
     @Override
     public PageInfo<UserDto> getAllUsers(int pageNum, int pageSize) {
        
-        Page<User> bookList = PageHelper.startPage(pageNum, pageSize).doSelectPage(() -> userRepository.select());
-        PageInfo<User> bookListPageInfo = new PageInfo<>(bookList);
+        Page<User> userList = PageHelper.startPage(pageNum, pageSize).doSelectPage(() -> userRepository.select());
+        PageInfo<User> userListPageInfo = new PageInfo<>(userList);
         
-        PageInfo<UserDto> userDtoListPageInfo = userMapper.fromListModel(bookListPageInfo);
+        PageInfo<UserDto> userDtoListPageInfo = userMapper.fromListModel(userListPageInfo);
 
-        // userDtos.forEach(userDto -> userDto.getProfile().buildNameAndUri(fileBaseUri));
+       for (UserDto userDto : userDtoListPageInfo.getList()) {
+            String fileName = userDto.getProfile().getUuid() + "." + userDto.getProfile().getExtension().trim();
+            String fileUri = fileBaseUri + fileName;
+            userDto.getProfile().setName(fileName);
+            userDto.getProfile().setUri(fileUri);
+
+        }        // userDtos.forEach(userDto -> userDto.getProfile().buildNameAndUri(fileBaseUri));
 
         return userDtoListPageInfo;
     }
     
+
+    @Override
+    public UserDto getUserByUsernameOrEmail(String usernameOrEmail) {
+
+        User user = userRepository.selectWhereUsernameOrEmail(usernameOrEmail, true).orElseThrow(() ->
+                new UsernameNotFoundException("User is not found!"));
+
+        UserDto userDto = userMapper.fromModel(user);
+        userDto.getProfile().buildNameAndUri(fileBaseUri);
+
+        return userDto;
+    }
+
     @Override
     public boolean checkUserEmail(String email) {
         return userRepository.existsWhereEmail(email);

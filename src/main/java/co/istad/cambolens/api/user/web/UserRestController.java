@@ -68,6 +68,17 @@ public class UserRestController {
         return ResponseEntity.ok(rest);
     }
 
+    @GetMapping("/find-by-usernameoremail")
+    ResponseEntity<?> doGetUserByUsernameOrEmail(@RequestParam("usernameOrEmail") String usernameOrEmail) {
+
+        UserDto userDto = userServiceImpl.getUserByUsernameOrEmail(usernameOrEmail);
+
+        Rest<Object> rest = Rest.ok()
+                            .setData(userDto)
+                            .setMessage("User has been fetched successfully.");
+        return ResponseEntity.ok(rest);
+    }
+
     @GetMapping("/me")
     ResponseEntity<?> getCurrentUser(Authentication authentication) {
 

@@ -18,12 +18,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class UserDto {
+    private Long id;
     private String username;
     private String email;
+    private String password;
     private String familyName;
     private String givenName;
     private String phoneNumber;
     private FileDto profile;
     private List<Role> roles;
+    private Boolean isEnabled;
 
 }
