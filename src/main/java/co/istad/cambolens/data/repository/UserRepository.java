@@ -15,7 +15,7 @@ import co.istad.cambolens.data.provider.UserProvider;
 @Repository
 public interface UserRepository {
     
-    @Select("SELECT * FROM users WHERE is_enabled = TRUE ORDER BY id DESC")
+    @Select("SELECT * FROM users  ORDER BY id DESC")
     @Results(id = "userResultMap", value = {
         @Result(column = "id", property = "id"),
         @Result(column = "family_name", property = "familyName"),
@@ -28,7 +28,7 @@ public interface UserRepository {
 })
     List<User> select();
 
-    @Select("SELECT * FROM users WHERE id = #{id} AND is_enabled = TRUE")
+    @Select("SELECT * FROM users WHERE id = #{id}")
     @ResultMap("userResultMap")
     Optional<User> selectWhereId(@Param("id") Long id);
 
