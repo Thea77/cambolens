@@ -64,6 +64,8 @@ public class SecurityConfig {
                         "/swagger-resources/configuration/security")
                 .permitAll()
                 .antMatchers("/api/v1/auth/login",
+                        "/api/v1/files/download/**",
+                        "/api/v1/files/count-download/**",
                         "/api/v1/users/find-by-usernameoremail",
                         "/api/v1/auth/register",
                         "/api/v1/auth/forgot-password",

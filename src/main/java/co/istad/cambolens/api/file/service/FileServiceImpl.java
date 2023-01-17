@@ -244,43 +244,39 @@ public class FileServiceImpl implements FileService {
 
     }
 
-    @Override
-    public FileDto downloadImage(String uuid) {
+    // @Override
+    // public FileDto downloadImage(String uuid) {
 
-        Optional<File> opImgae = fileRepository.selectByUUID(uuid);
-        File image = opImgae.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                "File with UUID = " + uuid + " is not found in DB"));
+    //     Optional<File> opImgae = fileRepository.selectByUUID(uuid);
+    //     File image = opImgae.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+    //             "File with UUID = " + uuid + " is not found in DB"));
 
-        FileDto imageDto = fileMapper.fromModel(image);
+    //     FileDto imageDto = fileMapper.fromModel(image);
 
-        String name = imageDto.getUuid() + "." + imageDto.getExtension();
-        imageDto.setName(name);
-        imageDto.setUri(uri + name);
+    //     String name = imageDto.getUuid() + "." + imageDto.getExtension();
+    //     imageDto.setName(name);
+    //     imageDto.setUri(uri + name);
 
-        return imageDto;
-    }
+    //     return imageDto;
+    // }
 
     @Override
     public FileDto countDownloadImage(String uuid) {
         File downloadCount = fileRepository.selectDownloadCount(uuid);
         FileDto downloadCountDto = fileMapper.fromModel(downloadCount);
 
-        try {
-            if (downloadCountDto == null) {
+            if (downloadCountDto.getDownload() == null) {
                 fileRepository.udpateDownloadCount(0, uuid);
+                String name = downloadCountDto.getUuid() + "." + downloadCountDto.getExtension();
+                downloadCountDto.setName(name);
+                downloadCountDto.setUri(uri + name);
             } else {
                 fileRepository.udpateDownloadCount(downloadCountDto.getDownload(), uuid);
+                String name = downloadCountDto.getUuid() + "." + downloadCountDto.getExtension();
+                downloadCountDto.setName(name);
+                downloadCountDto.setUri(uri + name);
             }
-
-        } catch (Exception e) {
-
-        }
-
-       
-        String name = downloadCountDto.getUuid() + "." + downloadCountDto.getExtension();
-        downloadCountDto.setName(name);
-        downloadCountDto.setUri(uri + name);
-
+    
         return downloadCountDto;
     }
 

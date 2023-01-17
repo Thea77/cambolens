@@ -42,7 +42,7 @@ public interface FileService {
     boolean existsFileID(Long id);
 
 
-    FileDto downloadImage(String uuid);
+    // FileDto downloadImage(String uuid);
 
     FileDto countDownloadImage(String uuid);
 }
