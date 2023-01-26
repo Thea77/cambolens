@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.view.RedirectView;
 
 import co.istad.cambolens.api.auth.AuthServiceImpl;
 import co.istad.cambolens.shared.rest.Rest;
@@ -92,12 +93,14 @@ public class AuthRestController {
 
     
     @GetMapping("verify-email")
-    String verifyEmail(@RequestParam("email") String email,
+    RedirectView verifyEmail(@RequestParam("email") String email,
                              @RequestParam("verificationCode") String verificationCode) {
 
         authService.verifyEmail(email, verificationCode);
-
-        return "Your email has been verified..!";
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:5000/login");
+        return redirectView;
+        // return "Your email has been verified..!";
     }
 
 

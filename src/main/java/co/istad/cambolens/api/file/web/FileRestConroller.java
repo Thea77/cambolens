@@ -1,7 +1,13 @@
 package co.istad.cambolens.api.file.web;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageInfo;
 
+import ch.qos.logback.core.util.FileUtil;
 import co.istad.cambolens.api.file.dto.FileDto;
 import co.istad.cambolens.api.file.service.FileServiceImpl;
 import co.istad.cambolens.shared.rest.Rest;
@@ -29,74 +36,74 @@ import lombok.RequiredArgsConstructor;
 public class FileRestConroller {
     private final FileServiceImpl fileServiceImpl;
 
+    @Value("${file.uri}")
+    private String uri;
     
     @GetMapping
     public ResponseEntity<?> getFiles(
-        @RequestParam(required = false, defaultValue = "1") Integer pageNum ,
-        @RequestParam(required = false, defaultValue = "20") Integer pageSize ) {
-            
-        PageInfo<FileDto> fileDtos = fileServiceImpl.findAllFiles(pageNum,pageSize);
+            @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(required = false, defaultValue = "20") Integer pageSize) {
+
+        PageInfo<FileDto> fileDtos = fileServiceImpl.findAllFiles(pageNum, pageSize);
         var rest = new Rest<PageInfo<FileDto>>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("Files Have been Fetched");
-        rest.setData(fileDtos);    
+        rest.setData(fileDtos);
         // log.info("Books= {}",fileDtos);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
-    
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getFilesById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getFilesById(@PathVariable("id") Long id) {
         var imageDto = fileServiceImpl.getFileByID(id);
 
         var rest = new Rest<FileDto>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("Files Have been fetched");
-        rest.setData(imageDto);    
+        rest.setData(imageDto);
         // log.info("File= {}",imageDtoList);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> doUploadOne(@RequestPart("file") MultipartFile file){
+    public ResponseEntity<?> doUploadOne(@RequestPart("file") MultipartFile file) {
         var imageDto = fileServiceImpl.uploadOne(file);
 
         var rest = new Rest<FileDto>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("File Have been uploaded");
-        rest.setData(imageDto);    
+        rest.setData(imageDto);
         // log.info("File= {}",imageDto);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
 
     @PostMapping(path = "/upload-all", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> doUploadAll(@RequestPart("files") List<MultipartFile> files){
+    public ResponseEntity<?> doUploadAll(@RequestPart("files") List<MultipartFile> files) {
         var imageDtoList = fileServiceImpl.uploadAll(files);
 
         var rest = new Rest<List<FileDto>>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("Files Have been uploaded");
-        rest.setData(imageDtoList);    
+        rest.setData(imageDtoList);
         // log.info("File= {}",imageDtoList);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
 
     @PutMapping(path = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> doUpdateImage(@RequestPart("file") MultipartFile file, @PathVariable("id") Long id){
+    public ResponseEntity<?> doUpdateImage(@RequestPart("file") MultipartFile file, @PathVariable("id") Long id) {
         var imageDto = fileServiceImpl.updateFile(file, id);
 
         var rest = new Rest<FileDto>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
         rest.setMessage("File Have been updated");
-        rest.setData(imageDto);    
+        rest.setData(imageDto);
         // log.info("File= {}",imageDto);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
 
     @DeleteMapping("/{uuid}")
@@ -113,28 +120,51 @@ public class FileRestConroller {
         return ResponseEntity.ok(rest);
     }
 
-    @GetMapping("/download/{uuid}")
-    public ResponseEntity<?> downloadFile(@PathVariable String uuid) {
-       FileDto fileDto = fileServiceImpl.countDownloadImage(uuid);
-        var rest = new Rest<FileDto>();
-        rest.setStatus(true);
-        rest.setCode(HttpStatus.OK.value());
-        rest.setMessage("Files Have been downloaded");
-        rest.setData(fileDto);    
-        // log.info("File= {}",imageDtoList);
-        return ResponseEntity.ok(rest); 
-    }
+    // @GetMapping("/download/{uuid}")
+    //     public ResponseEntity<Resource> downloadFile(@PathVariable String uuid) throws Exception {
+    //             File downloadFile = new File("server");
+    //             System.out.println("download="+downloadFile.getName());
+    //             //Return 404 error if the file is not found
+    //             if (!downloadFile.exists()) {
+    //               return ResponseEntity.noContent()
+    //                   .build();
+    //             }
+    //             InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile));
+    //             HttpHeaders header = new HttpHeaders();
+    //             header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + downloadFile.getName());
+    //             header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    //             header.add("Pragma", "no-cache");
+    //             header.add("Expires", "0");
+    //             return ResponseEntity.ok()
+    //                 .headers(header)
+    //                 .contentLength(downloadFile.length())
+    //                 .contentType(MediaType.parseMediaType("application/octet-stream"))
+    //                 .body(resource);
+    //           }
+
+    // @GetMapping("/download/{uuid}")
+    // public ResponseEntity<?> downloadFile(@PathVariable String uuid) {
+
+    // FileDto fileDto = fileServiceImpl.countDownloadImage(uuid);
+    // var rest = new Rest<FileDto>();
+    // rest.setStatus(true);
+    // rest.setCode(HttpStatus.OK.value());
+    // rest.setMessage("Files Have been downloaded");
+    // rest.setData(fileDto);
+    // // log.info("File= {}",imageDtoList);
+    // return ResponseEntity.ok(rest);
+    // }
 
     @GetMapping("/count-download/{uuid}")
     public ResponseEntity<?> doShowDownloadCount(@PathVariable String uuid) {
-    FileDto fileDto = fileServiceImpl.showDownloadCount(uuid);
+        FileDto fileDto = fileServiceImpl.showDownloadCount(uuid);
         var rest = new Rest<FileDto>();
         rest.setStatus(true);
         rest.setCode(HttpStatus.OK.value());
-        rest.setMessage("This image have been downloaded for "+ fileDto.getDownload() +" times");
-        rest.setData(fileDto);    
+        rest.setMessage("This image have been downloaded for " + fileDto.getDownload() + " times");
+        rest.setData(fileDto);
         // log.info("File= {}",imageDtoList);
-        return ResponseEntity.ok(rest); 
+        return ResponseEntity.ok(rest);
     }
 
 }

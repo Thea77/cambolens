@@ -82,7 +82,7 @@ public class PostProvider {
 
     public String buildSelectPostAuthorSql() {
         return new SQL() {{
-            SELECT("id,username,email,phone_number,family_name,given_name,is_enabled");
+            SELECT("id,username,email,phone_number,family_name,profile,given_name,is_enabled");
             FROM("users");
             WHERE("id = #{id}");
         }}.toString();

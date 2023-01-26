@@ -36,6 +36,7 @@ public interface PostRepository {
                     " INNER JOIN users u ON p.author = u.id" +
                     " INNER JOIN images i ON p.photo = i.id" +
                     " WHERE u.is_enabled = TRUE" +
+                    " AND i.download NOTNULL" +
                     " ORDER BY i.download DESC" +
                     " LIMIT 10 ")
     @ResultMap(value = "postResultMap")
@@ -66,6 +67,7 @@ public interface PostRepository {
         @Result(column = "given_name", property = "givenName")
         @Result(column = "phone_number", property = "phoneNumber")
         @Result(column = "is_enabled", property = "isEnabled")
+        @Result(column = "profile", property = "profile", one = @One(select = "selectPostPhoto"))
     User selectPostAuthor(@Param("id") Long id);
 
     @SelectProvider(type = PostProvider.class, method = "buildSelectPostPhotoSql")

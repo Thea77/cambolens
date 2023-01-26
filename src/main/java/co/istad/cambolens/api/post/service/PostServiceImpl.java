@@ -70,7 +70,15 @@ public class PostServiceImpl implements PostService {
             postDto.getPhoto().setName(fileName);
             postDto.getPhoto().setUri(fileUri);
 
+              // profile photo
+            String profileName = postDto.getAuthor().getProfile().getUuid() + "." + postDto.getAuthor().getProfile().getExtension().trim();
+            String profileUri = uri + profileName;
+            postDto.getAuthor().getProfile().setName(profileName);
+            postDto.getAuthor().getProfile().setUri(profileUri);
+
         }
+        System.out.println("posts="+postDtoListPageInfo.getList());
+
         return postDtoListPageInfo;
     }
 
@@ -79,12 +87,19 @@ public class PostServiceImpl implements PostService {
         List<Post> postsList = postRepository.selectTopDownload();
         List<PostDto> dtos = postMapper.toPostDtoForTopDownload(postsList);
 
+        // System.out.println("logPost="+dtos);
 
         for (PostDto postDto : dtos) {
             String fileName = postDto.getPhoto().getUuid() + "." + postDto.getPhoto().getExtension().trim();
             String fileUri = uri + fileName;
             postDto.getPhoto().setName(fileName);
             postDto.getPhoto().setUri(fileUri);
+
+            // profile photo
+            String profileName = postDto.getAuthor().getProfile().getUuid() + "." + postDto.getAuthor().getProfile().getExtension().trim();
+            String profileUri = uri + profileName;
+            postDto.getAuthor().getProfile().setName(profileName);
+            postDto.getAuthor().getProfile().setUri(profileUri);
 
         }
            
