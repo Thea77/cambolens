@@ -76,7 +76,7 @@ public class SecurityConfig {
                         "/api/v1/posts/{id}",
                         "/api/v1/posts/top-download")
                 .permitAll()
-                .antMatchers("/api/v1/users/me", "/api/v1/files/**").hasAnyRole("ADMIN","EDITOR")
+                .antMatchers("/api/v1/users/me", "/api/v1/files/**","/api/v1/users/edit-profile").hasAnyRole("ADMIN","EDITOR")
                 .antMatchers("/api/v1/users/**", "/api/v1/users/create-users").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()

@@ -104,7 +104,7 @@ public class UserRestController {
         Rest<Object> rest = Rest.ok()
                         .setData(userServiceImpl.editUserProfile(body))
                         .setMessage("Editing profile information successfully.");
-                        System.out.println("nyUser"+ user);
+                        // System.out.println("myUser"+ user);
 
         return ResponseEntity.ok(rest);
     }
