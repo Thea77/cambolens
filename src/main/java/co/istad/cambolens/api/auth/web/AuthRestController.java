@@ -133,12 +133,15 @@ public class AuthRestController {
     }
 
     @GetMapping("reset-password")
-    String doVerifyForgotPassword(@RequestParam("email") String email,
+    RedirectView doVerifyForgotPassword(@RequestParam("email") String email,
                         @RequestParam("token") String token) {
 
         authService.verifyForgotPassword(email, token);
 
-        return "Reset Your Password";
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:5000/reset/password");
+        return redirectView;
+        // return "Reset Your Password";
     }
 
     @PutMapping("/reset-password")

@@ -112,6 +112,13 @@ public class PostServiceImpl implements PostService {
             Post post = postRepository.selectById(id);
             PostDto postDto = postMapper.fromModel(post);
             postDto.setPhoto(fileServiceImpl.getFileByID(post.getPhoto().getId()));
+
+              // profile photo
+              String profileName = postDto.getAuthor().getProfile().getUuid() + "." + postDto.getAuthor().getProfile().getExtension().trim();
+              String profileUri = uri + profileName;
+              postDto.getAuthor().getProfile().setName(profileName);
+              postDto.getAuthor().getProfile().setUri(profileUri);
+              
             return postDto;
         } else {
             String reason = "Post could not be founded.";
