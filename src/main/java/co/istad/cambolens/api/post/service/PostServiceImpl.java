@@ -149,14 +149,14 @@ public class PostServiceImpl implements PostService {
                 List<Category> categories = new ArrayList<>();
                 for (Integer cateId : body.getCategoriesId()) {
                     postRepository.insertPostCategory(post.getId(), cateId);
-                    // to response genre obj in book
+                    // to response category obj in post
                     categories.add(categoryRepository.selectById(cateId));
                 }
                 post.setCategories(categories);
             } else {
                 postRepository.update(post);
                 postRepository.deletePostCategory(post.getId());
-                // Update genre of book
+                // Update category of post
                 body.getCategoriesId().forEach(cateId -> postRepository.insertPostCategory(post.getId(), cateId));
             }
 
